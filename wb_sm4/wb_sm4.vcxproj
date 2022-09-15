@@ -131,7 +131,6 @@
     <ClCompile Include="random.c" />
     <ClCompile Include="sm4.c" />
     <ClCompile Include="WBMatrix.c" />
-    <ClCompile Include="wb_sm4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="random.h" />

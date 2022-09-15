@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="wb_sm4.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="random.c">
       <Filter>源文件</Filter>
     </ClCompile>
