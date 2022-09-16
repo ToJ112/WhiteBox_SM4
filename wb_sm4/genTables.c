@@ -36,8 +36,10 @@ M32 L_matrix = {
     .M[31] = 0x40404101
 };
 
+
 uint32_t Table_part2[32][4][256];  //32轮 part2有四个这种表，8bit输入32bit输出   复合了嵌入rk，sbox，L移位
 uint32_t Table_SL[32][4][256];     //经过sbox和L循环
+uint8_t Table_addIn_part2[32][4][256];
 uint32_t Mask[32][4];              //32轮，每轮4个32bit mask
 Aff8 Eij[32][4];
 Aff8 Eij_inv[32][4];
@@ -46,7 +48,8 @@ Aff32 MB[32][4];
 Aff32 MB_inv[32][4];
 uint8_t Out_part2[32][4][8][16];          //32轮，每轮4个表，暂时定4*(32/4)=32个out一轮要用，out编码输入是4bit即16种可能值
 uint8_t In_part2[32][4][8][16];          //32轮，每轮4个表，暂时定4*(32/4)=32个in一轮要用，in编码输入是4bit即16种可能值
-
+uint8_t Out_part1[32][8][16];
+uint8_t In_part1[32][8][16];
 
 void printstate(unsigned char* in)
 {
@@ -97,9 +100,13 @@ void randomOutIn(unsigned char Out[32][4][8][16], unsigned char In[32][4][8][16]
     return;
 }
 
-void wbsm4_gen_part2Table(uint8_t* key)
-{
 
+void wbsm4_gen_part1Table() {
+
+}
+
+void wbsm4_gen_part2Table(uint8_t* key)
+ {
     sm4_context ctx;
     sm4_setkey_enc(&ctx, key);   //密钥扩展
     InitRandom(((unsigned int)time(NULL)));
@@ -116,9 +123,10 @@ void wbsm4_gen_part2Table(uint8_t* key)
         {
             genaffinepairM8(&Eij[i][j], &Eij_inv[i][j]);
         }
-        // combine 4 E8 to 1 E32
-        affinecomM8to32(Eij[i][0], Eij[i][1], Eij[i][2], Eij_inv[i][3], &Ei[i]);
 
+        // combine 4 E8 to 1 E32
+        affinecomM8to32(Eij[i][0], Eij[i][1], Eij[i][2], Eij[i][3], &Ei[i]);
+    }
     //生成32轮，每轮四个的  仿射线性编码矩阵和常数以及其逆矩阵
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
@@ -127,13 +135,29 @@ void wbsm4_gen_part2Table(uint8_t* key)
     }
     //生成out以及in的非线性编码
     randomOutIn(Out_part2, In_part2);
+    for (int i = 0; i < 4; i++)                         //第一轮进入part2不带编码，所以输入是x输出也是x
+        for (int x = 0; x < 256; x++)
+            Table_addIn_part2[0][i][x] = x;
+
+    for (int r = 1; r < 32; r++) {                                //进入s盒之前，去掉part1的非线性编码
+        for(int i = 0; i < 4; i++){
+            for (int x = 0; x < 256; x++) {
+                uint8_t y = x;
+                Table_addIn_part2[r][i][x] =
+                    (In_part1[r][2 * i + 0][y >> 4 & 0xf] << 4) |
+                    (In_part1[r][2 * i + 1][y >> 0 & 0xf] << 0);
+
+            }
+        }
+    }
+
 
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             for (int x = 0; x < 256; x++) {
-                uint8_t temp_u8 = SBOX[x ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //异或rk，sbox
+                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //异或rk，sbox
                 uint32_t temp_u32 = temp_u8 << (24 - j * 8);                      //8bit扩展成32bit
-                Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);         //异或rk，sbox，L移位
+                Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);             //异或rk，sbox，L移位
             }
         }
     }
@@ -143,8 +167,8 @@ void wbsm4_gen_part2Table(uint8_t* key)
             for (int x = 0; x < 256; x++) {
                
                 uint32_t temp_u32 = VecAddVecV32(Table_SL[i][j][x], Mask[i][j]);      //异或rk，sbox，L移位,+mask
-                temp_u32 = MatMulNumM32(MB[i][j].Mat, temp_u32);    //异或rk，sbox，L移位,+mask,+线性矩阵MB.Mat
-                Table_part2[i][j][x] = VecAddVecV32(temp_u32, MB[i][j].Vec.V);    //异或rk，sbox，L移位,+mask,+线性矩阵MB.Mat,+MB.Vec
+                temp_u32 = MatMulNumM32(Ei[i].Mat, temp_u32);    //异或rk，sbox，L移位,+mask,+线性矩阵MB.Mat
+                Table_part2[i][j][x] = VecAddVecV32(temp_u32, Ei[i].Vec.V);    //异或rk，sbox，L移位,+mask,+线性矩阵MB.Mat,+MB.Vec
 
             }
         }

@@ -1,0 +1,9 @@
+﻿  genTables.c
+C:\Users\zjy\source\repos\WhiteBox_SM4\wb_sm4\genTables.c(101): fatal  error C1075: “{”: 未找到匹配令牌
+  random.c
+  sm4.c
+  WBMatrix.c
+C:\Users\zjy\source\repos\WhiteBox_SM4\wb_sm4\WBMatrix.c(242,12): warning C4101: “q”: 未引用的局部变量
+C:\Users\zjy\source\repos\WhiteBox_SM4\wb_sm4\WBMatrix.c(399,12): warning C4101: “q”: 未引用的局部变量
+C:\Users\zjy\source\repos\WhiteBox_SM4\wb_sm4\WBMatrix.c(570,5): warning C4013: “initM32”未定义；假设外部返回 int
+  正在生成代码...
