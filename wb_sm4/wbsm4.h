@@ -49,7 +49,6 @@ M32 L_matrix = {
 };
 
 
-
 Aff32 M[32][3];
 Aff32 C[32];
 Aff32 D[32];
@@ -70,6 +69,8 @@ uint8_t In_part2[32][4][8][16];          //32轮，每轮4个表，暂时定4*(3
 uint8_t Out_part1[32][8][16];
 uint8_t In_part1[32][8][16];
 
-void printstate(unsigned char* in);
-void wbsm4_gen(uint8_t* key);
+void printstate(unsigned char *in);
+
+void wbsm4_gen(uint8_t *key);
+
 void wbsm4_encrypt(unsigned char IN[], unsigned char OUT[]);

@@ -20,6 +20,7 @@ void initV32(V32* Vec);
 void MatMulVecM32(M32 Mat, V32 Vec, V32* ans);
 void MatMulVecM8(M8 Mat, V8 Vec, V8* ans);
 uint32_t MatMulNumM32(M32 Mat, uint32_t n);   //32*32矩阵与32维向量相乘
+uint8_t VecAddVecV8(uint8_t Vec1, uint8_t Vec2, uint8_t Vec3, uint8_t Vec4);
 uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2);   //32bit向量的异或
 void identityM8(M8* Mat);
 void identityM32(M32* Mat);
@@ -31,6 +32,7 @@ void copyM8(M8 Mat1, M8* Mat2);
 void copyM32(M32 Mat1, M32* Mat2);
 int isequalM32(M32 Mat1, M32 Mat2);
 int isinvertM32(M32 Mat);
+uint8_t affineU8(Aff8 aff, uint8_t arr);
 uint32_t affineU32(Aff32 aff, uint32_t arr);
 void genMatpairM8(M8* Mat, M8* Mat_inv);
 void genMatpairM32(M32* Mat, M32* Mat_inv);

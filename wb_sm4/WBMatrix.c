@@ -104,6 +104,10 @@ uint32_t MatMulNumM32(M32 Mat, uint32_t n)//matrix * number -> number 32bits
     }
     return temp;
 }
+uint8_t VecAddVecV8(uint8_t Vec1, uint8_t Vec2, uint8_t Vec3, uint8_t Vec4)
+{
+    return (Vec1 ^ Vec2 ^ Vec3 ^ Vec4);
+}
 uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2) {    //32bit向量相乘
     return (Vec1 ^ Vec2);
 }
@@ -227,7 +231,13 @@ int isinvertM32(M32 Mat)//Invertible Matrix?
     if (Mat.M[31] == idM32[31]) return 1;
     else return 0;
 }
-
+uint8_t affineU8(Aff8 aff, uint8_t arr)//8bits affine transformation
+{
+    V8 mul_vec, ans_vec;
+    mul_vec.V = arr;
+    MatMulVecM8(aff.Mat, mul_vec, &ans_vec);//mul
+    return ans_vec.V ^ aff.Vec.V;//add
+}
 uint32_t affineU32(Aff32 aff, uint32_t arr)//32bits affine transformation
 {
     V32 mul_vec, ans_vec;
