@@ -39,7 +39,7 @@ M32 L_matrix = {
 
 uint32_t Table_part2[32][4][256];  //32轮 part2有四个这种表，8bit输入32bit输出   复合了嵌入rk，sbox，L移位
 uint32_t Table_SL[32][4][256];     //经过sbox和L循环
-uint8_t Table_addIn_part2[32][4][256];
+uint8_t Table_before_part2[32][4][256];
 uint32_t Mask[32][4];              //32轮，每轮4个32bit mask
 Aff8 Eij[32][4];
 Aff8 Eij_inv[32][4];
@@ -127,6 +127,8 @@ void wbsm4_gen_part2Table(uint8_t* key)
         // combine 4 E8 to 1 E32
         affinecomM8to32(Eij[i][0], Eij[i][1], Eij[i][2], Eij[i][3], &Ei[i]);
     }
+
+
     //生成32轮，每轮四个的  仿射线性编码矩阵和常数以及其逆矩阵
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
@@ -137,13 +139,13 @@ void wbsm4_gen_part2Table(uint8_t* key)
     randomOutIn(Out_part2, In_part2);
     for (int i = 0; i < 4; i++)                         //第一轮进入part2不带编码，所以输入是x输出也是x
         for (int x = 0; x < 256; x++)
-            Table_addIn_part2[0][i][x] = x;
+            Table_before_part2[0][i][x] = x;
 
     for (int r = 1; r < 32; r++) {                                //进入s盒之前，去掉part1的非线性编码
         for(int i = 0; i < 4; i++){
             for (int x = 0; x < 256; x++) {
                 uint8_t y = x;
-                Table_addIn_part2[r][i][x] =
+                Table_before_part2[r][i][x] =
                     (In_part1[r][2 * i + 0][y >> 4 & 0xf] << 4) |
                     (In_part1[r][2 * i + 1][y >> 0 & 0xf] << 0);
 
@@ -151,11 +153,27 @@ void wbsm4_gen_part2Table(uint8_t* key)
         }
     }
 
+    for (int r = 1; r < 32; r++) {
+        for (int i = 0; i < 4; i++) {
+            for (int x = 0; x < 256; x++) {
+                Table_before_part2[r][i][x] = affineU8(Eij_inv[r][i], Table_before_part2[r][i][x]);
+            
+            }
+        }
+    }
+
+    for (int r = 1; r < 32; r++) {
+        for (int i = 0; i < 4; i++) {
+            for (int x = 0; x < 256; x++) {
+                Table_before_part2[r][i][x] = Table_before_part2[r][i][x] ^ VecAddVecV8(Mask[r][0], Mask[r][1], Mask[r][2], Mask[r][3]);
+            }
+        }
+    }                     
 
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             for (int x = 0; x < 256; x++) {
-                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //异或rk，sbox
+                uint8_t temp_u8 = SBOX[Table_before_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //异或rk，sbox
                 uint32_t temp_u32 = temp_u8 << (24 - j * 8);                      //8bit扩展成32bit
                 Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);             //异或rk，sbox，L移位
             }
