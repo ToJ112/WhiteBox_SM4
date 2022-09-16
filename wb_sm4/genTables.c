@@ -155,7 +155,7 @@ void wbsm4_gen_part2Table(uint8_t* key)
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             for (int x = 0; x < 256; x++) {
-                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //异或rk，sbox
+                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) & 0xFF];   //异或rk，sbox
                 uint32_t temp_u32 = temp_u8 << (24 - j * 8);                      //8bit扩展成32bit
                 Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);             //异或rk，sbox，L移位
             }
