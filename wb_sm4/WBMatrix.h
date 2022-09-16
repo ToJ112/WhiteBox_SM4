@@ -19,8 +19,8 @@ void initV8(V8* Vec);
 void initV32(V32* Vec);
 void MatMulVecM32(M32 Mat, V32 Vec, V32* ans);
 void MatMulVecM8(M8 Mat, V8 Vec, V8* ans);
-uint32_t MatMulNumM32(M32 Mat, uint32_t n);   //32*32¾ØÕóÓë32Î¬ÏòÁ¿Ïà³Ë
-uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2);   //32bitÏòÁ¿µÄÒì»ò
+uint32_t MatMulNumM32(M32 Mat, uint32_t n);   //32*32çŸ©é˜µä¸32ç»´å‘é‡ç›¸ä¹˜
+uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2);   //32bitå‘é‡çš„å¼‚æˆ–
 void identityM8(M8* Mat);
 void identityM32(M32* Mat);
 void randV8(V8* Vec);

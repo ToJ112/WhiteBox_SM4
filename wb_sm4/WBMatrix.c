@@ -104,7 +104,7 @@ uint32_t MatMulNumM32(M32 Mat, uint32_t n)//matrix * number -> number 32bits
     }
     return temp;
 }
-uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2) {    //32bitÏòÁ¿Ïà³Ë
+uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2) {    //32bitå‘é‡ç›¸ä¹˜
     return (Vec1 ^ Vec2);
 }
 void identityM8(M8* Mat)//identity matrix 8*8
