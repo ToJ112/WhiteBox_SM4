@@ -37,17 +37,17 @@ M32 L_matrix = {
 };
 
 
-uint32_t Table_part2[32][4][256];  //32ÂÖ part2ÓĞËÄ¸öÕâÖÖ±í£¬8bitÊäÈë32bitÊä³ö   ¸´ºÏÁËÇ¶Èërk£¬sbox£¬LÒÆÎ»
-uint32_t Table_SL[32][4][256];     //¾­¹ısboxºÍLÑ­»·
+uint32_t Table_part2[32][4][256];  //32è½® part2æœ‰å››ä¸ªè¿™ç§è¡¨ï¼Œ8bitè¾“å…¥32bitè¾“å‡º   å¤åˆäº†åµŒå…¥rkï¼Œsboxï¼ŒLç§»ä½
+uint32_t Table_SL[32][4][256];     //ç»è¿‡sboxå’ŒLå¾ªç¯
 uint8_t Table_addIn_part2[32][4][256];
-uint32_t Mask[32][4];              //32ÂÖ£¬Ã¿ÂÖ4¸ö32bit mask
+uint32_t Mask[32][4];              //32è½®ï¼Œæ¯è½®4ä¸ª32bit mask
 Aff8 Eij[32][4];
 Aff8 Eij_inv[32][4];
 Aff32 Ei[32];
 Aff32 MB[32][4];
 Aff32 MB_inv[32][4];
-uint8_t Out_part2[32][4][8][16];          //32ÂÖ£¬Ã¿ÂÖ4¸ö±í£¬ÔİÊ±¶¨4*(32/4)=32¸öoutÒ»ÂÖÒªÓÃ£¬out±àÂëÊäÈëÊÇ4bit¼´16ÖÖ¿ÉÄÜÖµ
-uint8_t In_part2[32][4][8][16];          //32ÂÖ£¬Ã¿ÂÖ4¸ö±í£¬ÔİÊ±¶¨4*(32/4)=32¸öinÒ»ÂÖÒªÓÃ£¬in±àÂëÊäÈëÊÇ4bit¼´16ÖÖ¿ÉÄÜÖµ
+uint8_t Out_part2[32][4][8][16];          //32è½®ï¼Œæ¯è½®4ä¸ªè¡¨ï¼Œæš‚æ—¶å®š4*(32/4)=32ä¸ªoutä¸€è½®è¦ç”¨ï¼Œoutç¼–ç è¾“å…¥æ˜¯4bitå³16ç§å¯èƒ½å€¼
+uint8_t In_part2[32][4][8][16];          //32è½®ï¼Œæ¯è½®4ä¸ªè¡¨ï¼Œæš‚æ—¶å®š4*(32/4)=32ä¸ªinä¸€è½®è¦ç”¨ï¼Œinç¼–ç è¾“å…¥æ˜¯4bitå³16ç§å¯èƒ½å€¼
 uint8_t Out_part1[32][8][16];
 uint8_t In_part1[32][8][16];
 
@@ -60,21 +60,21 @@ void printstate(unsigned char* in)
     }
     printf("\n");
 }
-void randomOutIn(unsigned char Out[32][4][8][16], unsigned char In[32][4][8][16]) {//Ö»µÚÒ»¸ö¿ÉÎª¿Õ
+void randomOutIn(unsigned char Out[32][4][8][16], unsigned char In[32][4][8][16]) {//åªç¬¬ä¸€ä¸ªå¯ä¸ºç©º
 
-    //³õÊ¼»¯
-    srand((unsigned int)time(NULL));		//Ê±¼ä²¥ÖÖ
-    for (int r = 0; r < 32; r++)					//Ç°9ÂÖ
-        for (int i = 0; i < 4; i++) {			//Ã¿Ò»ÂÖÓĞ4´ÎÁĞ»ìºÏ
-            for (int j = 0; j < 8; j++) {		//Ã¿Ò»´ÎÁĞ»ìºÏ£¬ÄÜÓÃµ½µÄOut×ÜÊı
-                for (int k = 0; k < 16; k++) {	//´óĞ¡Îª16µÄÒ»Î¬±í£¬×÷ÓÃÊÇ4bitµ½4bitµÄËæ»ú´ú»»
+    //åˆå§‹åŒ–
+    srand((unsigned int)time(NULL));		//æ—¶é—´æ’­ç§
+    for (int r = 0; r < 32; r++)					//å‰9è½®
+        for (int i = 0; i < 4; i++) {			//æ¯ä¸€è½®æœ‰4æ¬¡åˆ—æ··åˆ
+            for (int j = 0; j < 8; j++) {		//æ¯ä¸€æ¬¡åˆ—æ··åˆï¼Œèƒ½ç”¨åˆ°çš„Outæ€»æ•°
+                for (int k = 0; k < 16; k++) {	//å¤§å°ä¸º16çš„ä¸€ç»´è¡¨ï¼Œä½œç”¨æ˜¯4bitåˆ°4bitçš„éšæœºä»£æ¢
                     Out[r][i][j][k] = k;
 
                 }
             }
         }
 
-    //Ëæ»úÖÃ»»Éú³ÉOut 
+    //éšæœºç½®æ¢ç”ŸæˆOut 
     for (int r = 0; r < 32; r++)
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 8; j++) {
@@ -88,7 +88,7 @@ void randomOutIn(unsigned char Out[32][4][8][16], unsigned char In[32][4][8][16]
             }
         }
 
-    //Éú³ÉIn 
+    //ç”ŸæˆIn 
     for (int r = 0; r < 32; r++)
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 8; j++) {
@@ -108,9 +108,9 @@ void wbsm4_gen_part1Table() {
 void wbsm4_gen_part2Table(uint8_t* key)
  {
     sm4_context ctx;
-    sm4_setkey_enc(&ctx, key);   //ÃÜÔ¿À©Õ¹
+    sm4_setkey_enc(&ctx, key);   //å¯†é’¥æ‰©å±•
     InitRandom(((unsigned int)time(NULL)));
-    //Éú³É32ÂÖ£¬Ã¿ÂÖ4¸öµÄ  Ëæ»ú²¼¶ûÑÚÂë
+    //ç”Ÿæˆ32è½®ï¼Œæ¯è½®4ä¸ªçš„  éšæœºå¸ƒå°”æ©ç 
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             Mask[i][j] = cus_random();
@@ -127,19 +127,19 @@ void wbsm4_gen_part2Table(uint8_t* key)
         // combine 4 E8 to 1 E32
         affinecomM8to32(Eij[i][0], Eij[i][1], Eij[i][2], Eij[i][3], &Ei[i]);
     }
-    //Éú³É32ÂÖ£¬Ã¿ÂÖËÄ¸öµÄ  ·ÂÉäÏßĞÔ±àÂë¾ØÕóºÍ³£ÊıÒÔ¼°ÆäÄæ¾ØÕó
+    //ç”Ÿæˆ32è½®ï¼Œæ¯è½®å››ä¸ªçš„  ä»¿å°„çº¿æ€§ç¼–ç çŸ©é˜µå’Œå¸¸æ•°ä»¥åŠå…¶é€†çŸ©é˜µ
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             genaffinepairM32(&MB[i][j], &MB_inv[i][j]);
         }
     }
-    //Éú³ÉoutÒÔ¼°inµÄ·ÇÏßĞÔ±àÂë
+    //ç”Ÿæˆoutä»¥åŠinçš„éçº¿æ€§ç¼–ç 
     randomOutIn(Out_part2, In_part2);
-    for (int i = 0; i < 4; i++)                         //µÚÒ»ÂÖ½øÈëpart2²»´ø±àÂë£¬ËùÒÔÊäÈëÊÇxÊä³öÒ²ÊÇx
+    for (int i = 0; i < 4; i++)                         //ç¬¬ä¸€è½®è¿›å…¥part2ä¸å¸¦ç¼–ç ï¼Œæ‰€ä»¥è¾“å…¥æ˜¯xè¾“å‡ºä¹Ÿæ˜¯x
         for (int x = 0; x < 256; x++)
             Table_addIn_part2[0][i][x] = x;
 
-    for (int r = 1; r < 32; r++) {                                //½øÈësºĞÖ®Ç°£¬È¥µôpart1µÄ·ÇÏßĞÔ±àÂë
+    for (int r = 1; r < 32; r++) {                                //è¿›å…¥sç›’ä¹‹å‰ï¼Œå»æ‰part1çš„éçº¿æ€§ç¼–ç 
         for(int i = 0; i < 4; i++){
             for (int x = 0; x < 256; x++) {
                 uint8_t y = x;
@@ -155,9 +155,9 @@ void wbsm4_gen_part2Table(uint8_t* key)
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 4; j++) {
             for (int x = 0; x < 256; x++) {
-                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //Òì»òrk£¬sbox
-                uint32_t temp_u32 = temp_u8 << (24 - j * 8);                      //8bitÀ©Õ¹³É32bit
-                Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);             //Òì»òrk£¬sbox£¬LÒÆÎ»
+                uint8_t temp_u8 = SBOX[Table_addIn_part2[i][j][x] ^ (ctx.sk[i] >> (24 - j * 8)) && 0xFF];   //å¼‚æˆ–rkï¼Œsbox
+                uint32_t temp_u32 = temp_u8 << (24 - j * 8);                      //8bitæ‰©å±•æˆ32bit
+                Table_SL[i][j][x] = MatMulNumM32(L_matrix, temp_u32);             //å¼‚æˆ–rkï¼Œsboxï¼ŒLç§»ä½
             }
         }
     }
@@ -166,14 +166,14 @@ void wbsm4_gen_part2Table(uint8_t* key)
         for (int j = 0; j < 4; j++) {
             for (int x = 0; x < 256; x++) {
                
-                uint32_t temp_u32 = VecAddVecV32(Table_SL[i][j][x], Mask[i][j]);      //Òì»òrk£¬sbox£¬LÒÆÎ»,+mask
-                temp_u32 = MatMulNumM32(Ei[i].Mat, temp_u32);    //Òì»òrk£¬sbox£¬LÒÆÎ»,+mask,+ÏßĞÔ¾ØÕóMB.Mat
-                Table_part2[i][j][x] = VecAddVecV32(temp_u32, Ei[i].Vec.V);    //Òì»òrk£¬sbox£¬LÒÆÎ»,+mask,+ÏßĞÔ¾ØÕóMB.Mat,+MB.Vec
+                uint32_t temp_u32 = VecAddVecV32(Table_SL[i][j][x], Mask[i][j]);      //å¼‚æˆ–rkï¼Œsboxï¼ŒLç§»ä½,+mask
+                temp_u32 = MatMulNumM32(Ei[i].Mat, temp_u32);    //å¼‚æˆ–rkï¼Œsboxï¼ŒLç§»ä½,+mask,+çº¿æ€§çŸ©é˜µMB.Mat
+                Table_part2[i][j][x] = VecAddVecV32(temp_u32, Ei[i].Vec.V);    //å¼‚æˆ–rkï¼Œsboxï¼ŒLç§»ä½,+mask,+çº¿æ€§çŸ©é˜µMB.Mat,+MB.Vec
 
             }
         }
     }
-    for (int r = 0; r < 32; r++) {                                ////Òì»òrk£¬sbox£¬LÒÆÎ»,+mask,+ÏßĞÔ¾ØÕóMB.Mat,+MB.Vec,+·ÇÏßĞÔ±àÂëOut
+    for (int r = 0; r < 32; r++) {                                ////å¼‚æˆ–rkï¼Œsboxï¼ŒLç§»ä½,+mask,+çº¿æ€§çŸ©é˜µMB.Mat,+MB.Vec,+éçº¿æ€§ç¼–ç Out
         for (int i = 0; i < 4; i++) {
             for (int x = 0; x < 256; x++) {
                 uint8_t y = x;
