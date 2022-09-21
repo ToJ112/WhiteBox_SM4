@@ -1,5 +1,6 @@
 #include "WBMatrix.h"
 #include "sm4.h"
+#include "sbox.h"
 
 #define GET32(pc)  (\
 ((uint32_t)(pc)[0] << 24) ^\
@@ -57,7 +58,7 @@ Aff32 FE[4];
 uint32_t Table[32][4][256];
 uint32_t Table_part2[32][4][256];  //32轮 part2有四个这种表，8bit输入32bit输出   复合了嵌入rk，sbox，L移位
 uint32_t Table_SL[32][4][256];     //经过sbox和L循环
-uint8_t Table_addIn_part2[32][4][256];
+uint8_t Table_before_part2[32][4][256];
 uint32_t Mask[32][4];              //32轮，每轮4个32bit mask
 Aff8 Eij[32][4];
 Aff8 Eij_inv[32][4];
@@ -66,8 +67,13 @@ Aff32 MB[32][4];
 Aff32 MB_inv[32][4];
 uint8_t Out_part2[32][4][8][16];          //32轮，每轮4个表，暂时定4*(32/4)=32个out一轮要用，out编码输入是4bit即16种可能值
 uint8_t In_part2[32][4][8][16];          //32轮，每轮4个表，暂时定4*(32/4)=32个in一轮要用，in编码输入是4bit即16种可能值
+uint8_t Out_before_xor[32][4][8][16];
+uint8_t In_before_xor[32][4][8][16];
+
+
 uint8_t Out_part1[32][8][16];
 uint8_t In_part1[32][8][16];
+uint32_t after_part2_change_linear[32][4][4][16][16];//32轮，part2表的32bit输出有4个，每个32bit分为4个8bit，每个8bit要分成2个4bit进行去非线性编码
 
 void printstate(unsigned char *in);
 

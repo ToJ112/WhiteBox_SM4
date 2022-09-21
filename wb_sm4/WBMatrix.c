@@ -108,6 +108,15 @@ uint8_t VecAddVecV8(uint8_t Vec1, uint8_t Vec2, uint8_t Vec3, uint8_t Vec4)
 {
     return (Vec1 ^ Vec2 ^ Vec3 ^ Vec4);
 }
+void MatMulVecM8(M8 Mat, V8 Vec, V8* ans)//matrix * vector -> vector 8*1
+{
+    int i;
+    initV8(ans);
+    for (i = 0; i < 8; i++)
+    {
+        if (xorU8(Mat.M[i] & Vec.V)) (*ans).V ^= idM8[i];
+    }
+}
 uint32_t VecAddVecV32(uint32_t Vec1, uint32_t Vec2) {    //32bit向量相乘
     return (Vec1 ^ Vec2);
 }
